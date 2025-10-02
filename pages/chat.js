@@ -87,7 +87,7 @@ export default function Chat() {
     }, 1000)
   }
 
-  // 기본 봇 응답 시스템
+  // 기본 봇 응답 시스템(이거 곧 연결해야함)
   const getBotResponse = (userInput) => {
     const input = userInput.toLowerCase()
     
@@ -123,7 +123,7 @@ export default function Chat() {
 
       <div className={styles.chatContainer}>
         <div className={styles.header}>
-          <h1>🤖 LG Inter 챗봇</h1>
+          <h1>LG Inter 챗봇</h1>
           <p>음성 인식과 텍스트 입력을 지원합니다</p>
         </div>
 
