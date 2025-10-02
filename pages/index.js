@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -20,6 +21,11 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
+          <Link href="/chat" className={styles.card}>
+            <h2>🤖 챗봇 테스트 &rarr;</h2>
+            <p>음성 인식과 텍스트 입력을 지원하는 챗봇을 체험해보세요.</p>
+          </Link>
+
           <div className={styles.card}>
             <h2>시작하기 &rarr;</h2>
             <p>Next.js의 페이지 라우팅 시스템을 확인해보세요.</p>
@@ -33,11 +39,6 @@ export default function Home() {
           <div className={styles.card}>
             <h2>스타일링 &rarr;</h2>
             <p>CSS 모듈을 사용한 스타일링을 경험해보세요.</p>
-          </div>
-
-          <div className={styles.card}>
-            <h2>배포 &rarr;</h2>
-            <p>Vercel을 통해 쉽게 배포할 수 있습니다.</p>
           </div>
         </div>
       </main>
