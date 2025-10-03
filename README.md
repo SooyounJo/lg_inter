@@ -9,7 +9,7 @@
 
 ```bash
 # .env.local
-NEXT_PUBLIC_GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### 2. 개발 서버 실행
@@ -19,10 +19,10 @@ yarn dev
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)에 접속하세요.
 
-### 3. API 키 설정
-- 웹 인터페이스에서 "API 설정" 버튼 클릭
-- Google Studio AI API 키 입력
-- 또는 환경변수에 설정된 키가 자동으로 로드됩니다
+### 3. API 키 발급 및 설정
+- [Google AI Studio](https://aistudio.google.com/app/apikey)에서 API 키 발급
+- 무료 할당량: 월 15회 요청 (Gemini Flash)
+- **중요**: API 키는 서버 환경변수에서만 관리됩니다 (보안)
 
 ## 기능
 

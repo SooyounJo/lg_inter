@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import styles from '../styles/Chat.module.css'
 import { FURON_PERSONALITY } from './AIPersonality'
-import { API_CONFIG, validateApiKey, getGoogleAIEndpoint } from '../config/api'
 
 export default function FuronAI() {
   const [messages, setMessages] = useState([
@@ -10,7 +9,8 @@ export default function FuronAI() {
   const [inputText, setInputText] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [apiKey, setApiKey] = useState(API_CONFIG.googleAI.apiKey || '')
+  const [apiStatus, setApiStatus] = useState('🤖 Gemini API 연결 중...')
+  const [isClient, setIsClient] = useState(false)
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
 
@@ -59,6 +59,11 @@ export default function FuronAI() {
       }
     }
   }, [inputText])
+
+  // 클라이언트 사이드 확인
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // 메시지 자동 스크롤
   useEffect(() => {
@@ -119,72 +124,35 @@ export default function FuronAI() {
     }
   }
 
-  // 자기소개 관련 질문 처리
-  const isSelfIntroductionQuery = (message) => {
-    const lowerMessage = message.toLowerCase()
-    const selfIntroKeywords = [
-      '누구', '뭐야', '소개', '이름', '뭐하는', '무엇', '역할', 
-      '누군', '정체', '퓨론', 'furion', 'furion', '당신'
-    ]
-    return selfIntroKeywords.some(keyword => lowerMessage.includes(keyword))
-  }
 
-  // 자기소개 응답 생성
-  const generateSelfIntroduction = () => {
-    return `안녕하세요! 저는 퓨론이에요. 한국예술종합학교와 LG가 함께 만든 공감형 지능 스마트홈 가이드입니다. 사용자님의 감정을 이해하고 에어컨, 공기청정기, 조명, 냉장고, 스피커를 제어해서 더 편안한 환경을 만들어드려요.`
-  }
-
-  // Google Studio API 호출 함수
+  // AI API 호출 (모든 응답을 AI가 처리)
   const callFuronAPI = async (message) => {
-    if (!validateApiKey(apiKey)) {
-      return FURON_PERSONALITY.errorMessages.noApiKey
-    }
-
-    // 자기소개 질문이면 알고리즘으로 응답
-    if (isSelfIntroductionQuery(message)) {
-      return generateSelfIntroduction()
-    }
-
     try {
-      const response = await fetch(`${getGoogleAIEndpoint()}?key=${apiKey}`, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `${FURON_PERSONALITY.getSystemPrompt()}
-
-사용자 메시지: "${message}"
-
-퓨론으로서 응답해주세요.`
-            }]
-          }]
+        body: JSON.stringify({ 
+          message,
+          context: FURON_PERSONALITY.getSystemPrompt()
         })
       })
 
       const data = await response.json()
       
-      // API 응답 디버깅
-      console.log('API 응답:', data)
-      
       if (!response.ok) {
-        console.error('API 오류 응답:', data)
-        if (data.error) {
-          return `API 오류: ${data.error.message || '알 수 없는 오류입니다.'}`
-        }
-        return `HTTP 오류 ${response.status}: ${response.statusText}`
+        console.error('AI API 오류:', data)
+        return FURON_PERSONALITY.errorMessages.apiError
       }
       
-      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text
+      if (data.response) {
+        return data.response
       } else {
-        console.error('예상치 못한 응답 구조:', data)
         return FURON_PERSONALITY.errorMessages.apiError
       }
     } catch (error) {
-      console.error('API 호출 오류:', error)
+      console.error('AI API 호출 오류:', error)
       return FURON_PERSONALITY.errorMessages.connectionError
     }
   }
@@ -197,39 +165,37 @@ export default function FuronAI() {
     }
   }
 
-  // API 키 설정 토글
-  const [showApiKey, setShowApiKey] = useState(false)
+  // AI API 상태 체크
+  useEffect(() => {
+    // AI API 상태 확인
+    fetch('/api/chat', { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: 'test'
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          setApiStatus('✅ Gemini API 연결됨')
+        } else {
+          setApiStatus('⚠️ Gemini API 설정 필요')
+        }
+      })
+      .catch(() => {
+        setApiStatus('⚠️ Gemini API 설정 필요')
+      })
+  }, [])
 
   return (
     <div className={styles.chatContainer}>
       <div className={styles.header}>
         <h1>{FURON_PERSONALITY.name}</h1>
         <p>{FURON_PERSONALITY.description}</p>
-        <button 
-          className={styles.apiKeyButton}
-          onClick={() => setShowApiKey(!showApiKey)}
-        >
-          API 설정
-        </button>
-      </div>
-
-      {showApiKey && (
-        <div className={styles.apiKeySection}>
-          <input
-            type="password"
-            placeholder="Google Studio API 키를 입력하세요"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className={styles.apiKeyInput}
-          />
-          <button 
-            onClick={() => setShowApiKey(false)}
-            className={styles.closeButton}
-          >
-            닫기
-          </button>
+        <div className={styles.apiKeyControls}>
+          <span className={styles.apiKeyStatus}>{apiStatus}</span>
         </div>
-      )}
+      </div>
 
       <div className={styles.messagesContainer}>
         {messages.map((message) => (
@@ -240,10 +206,10 @@ export default function FuronAI() {
             <div className={styles.messageContent}>
               <div className={styles.messageText}>{message.text}</div>
               <div className={styles.messageTime}>
-                {message.timestamp.toLocaleTimeString('ko-KR', { 
+                {isClient ? message.timestamp.toLocaleTimeString('ko-KR', { 
                   hour: '2-digit', 
                   minute: '2-digit' 
-                })}
+                }) : '--:--'}
               </div>
             </div>
           </div>

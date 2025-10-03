@@ -41,10 +41,21 @@
   font-size: 0.75rem;
 }
 
-.apiKeyButton {
+.apiKeyControls {
   position: absolute;
   top: 12px;
   right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apiKeyStatus {
+  font-size: 0.65rem;
+  opacity: 0.9;
+}
+
+.apiKeyButton {
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
@@ -63,9 +74,13 @@
   background: #f8f9fa;
   padding: 12px 16px;
   border-bottom: 1px solid #e1e5e9;
+}
+
+.apiKeyInputGroup {
   display: flex;
   gap: 8px;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .apiKeyInput {
@@ -81,13 +96,50 @@
   border-color: #0070f3;
 }
 
-.closeButton {
-  background: #6c757d;
+.saveButton {
+  background: #28a745;
   color: white;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: #218838;
+}
+
+.saveButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.apiKeyHelp {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.apiKeyHelp a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.apiKeyHelp a:hover {
+  text-decoration: underline;
+}
+
+.closeButton {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
   cursor: pointer;
 }
 
