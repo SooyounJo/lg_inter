@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 import styles from '../styles/Chat.module.css'
+import { FURON_PERSONALITY } from './AIPersonality'
+import { API_CONFIG, validateApiKey, getGoogleAIEndpoint } from '../config/api'
 
-export default function ChatBot() {
+export default function FuronAI() {
   const [messages, setMessages] = useState([
-    { id: 1, text: "안녕하세요! 무엇을 도와드릴까요?", isBot: true, timestamp: new Date() }
+    { id: 1, text: FURON_PERSONALITY.greeting, isBot: true, timestamp: new Date() }
   ])
   const [inputText, setInputText] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [apiKey, setApiKey] = useState(API_CONFIG.googleAI.apiKey || '')
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
 
@@ -17,13 +20,28 @@ export default function ChatBot() {
       const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
       recognitionRef.current = new SpeechRecognition()
       recognitionRef.current.continuous = false
-      recognitionRef.current.interimResults = false
+      recognitionRef.current.interimResults = true  // 중간 결과 허용
       recognitionRef.current.lang = 'ko-KR'
 
       recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript
-        setInputText(transcript)
-        setIsListening(false)
+        let finalTranscript = ''
+        let interimTranscript = ''
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript
+          } else {
+            interimTranscript += transcript
+          }
+        }
+
+        if (finalTranscript) {
+          setInputText(finalTranscript)
+          setIsListening(false)
+        } else if (interimTranscript) {
+          setInputText(interimTranscript)
+        }
       }
 
       recognitionRef.current.onerror = () => {
@@ -32,9 +50,15 @@ export default function ChatBot() {
 
       recognitionRef.current.onend = () => {
         setIsListening(false)
+        // 1초 후 자동으로 메시지 전송
+        setTimeout(() => {
+          if (inputText.trim()) {
+            sendMessage()
+          }
+        }, 1000)
       }
     }
-  }, [])
+  }, [inputText])
 
   // 메시지 자동 스크롤
   useEffect(() => {
@@ -72,9 +96,9 @@ export default function ChatBot() {
     setInputText('')
     setIsProcessing(true)
 
-    // API 호출 함수 (나중에 실제 API로 교체)
+    // API 호출 함수
     try {
-      const response = await callChatAPI(inputText)
+      const response = await callFuronAPI(inputText)
       const botMessage = {
         id: Date.now() + 1,
         text: response,
@@ -95,29 +119,73 @@ export default function ChatBot() {
     }
   }
 
-  // API 호출 함수 (실제 API로 교체 가능)
-  const callChatAPI = async (message) => {
-    // 현재는 기본 응답 시스템 사용
-    // 나중에 실제 AI API로 교체
-    return getBotResponse(message)
+  // 자기소개 관련 질문 처리
+  const isSelfIntroductionQuery = (message) => {
+    const lowerMessage = message.toLowerCase()
+    const selfIntroKeywords = [
+      '누구', '뭐야', '소개', '이름', '뭐하는', '무엇', '역할', 
+      '누군', '정체', '퓨론', 'furion', 'furion', '당신'
+    ]
+    return selfIntroKeywords.some(keyword => lowerMessage.includes(keyword))
   }
 
-  // 기본 봇 응답 시스템
-  const getBotResponse = (userInput) => {
-    const input = userInput.toLowerCase()
-    
-    if (input.includes('안녕') || input.includes('hello')) {
-      return '안녕하세요! 반갑습니다!'
-    } else if (input.includes('날씨')) {
-      return '죄송합니다. 현재는 날씨 정보를 제공할 수 없습니다. API를 연결하면 실시간 날씨를 알려드릴 수 있어요!'
-    } else if (input.includes('시간') || input.includes('몇시')) {
-      return `현재 시간은 ${new Date().toLocaleTimeString('ko-KR')}입니다.`
-    } else if (input.includes('도움') || input.includes('help')) {
-      return '저는 다음과 같은 기능을 제공합니다:\n• 인사말\n• 시간 확인\n• 간단한 대화\n\n더 많은 기능은 API 연결 후 사용 가능합니다!'
-    } else if (input.includes('lg') || input.includes('엘지')) {
-      return 'LG Inter 프로젝트에 오신 것을 환영합니다! 저는 이 프로젝트의 챗봇입니다.'
-    } else {
-      return `"${userInput}"에 대해 더 자세히 알고 싶습니다. API를 연결하면 더 정확한 답변을 드릴 수 있어요!`
+  // 자기소개 응답 생성
+  const generateSelfIntroduction = () => {
+    return `안녕하세요! 저는 퓨론이에요. 한국예술종합학교와 LG가 함께 만든 공감형 지능 스마트홈 가이드입니다. 사용자님의 감정을 이해하고 에어컨, 공기청정기, 조명, 냉장고, 스피커를 제어해서 더 편안한 환경을 만들어드려요.`
+  }
+
+  // Google Studio API 호출 함수
+  const callFuronAPI = async (message) => {
+    if (!validateApiKey(apiKey)) {
+      return FURON_PERSONALITY.errorMessages.noApiKey
+    }
+
+    // 자기소개 질문이면 알고리즘으로 응답
+    if (isSelfIntroductionQuery(message)) {
+      return generateSelfIntroduction()
+    }
+
+    try {
+      const response = await fetch(`${getGoogleAIEndpoint()}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `${FURON_PERSONALITY.getSystemPrompt()}
+
+사용자 메시지: "${message}"
+
+퓨론으로서 응답해주세요.`
+            }]
+          }]
+        })
+      })
+
+      const data = await response.json()
+      
+      // API 응답 디버깅
+      console.log('API 응답:', data)
+      
+      if (!response.ok) {
+        console.error('API 오류 응답:', data)
+        if (data.error) {
+          return `API 오류: ${data.error.message || '알 수 없는 오류입니다.'}`
+        }
+        return `HTTP 오류 ${response.status}: ${response.statusText}`
+      }
+      
+      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text
+      } else {
+        console.error('예상치 못한 응답 구조:', data)
+        return FURON_PERSONALITY.errorMessages.apiError
+      }
+    } catch (error) {
+      console.error('API 호출 오류:', error)
+      return FURON_PERSONALITY.errorMessages.connectionError
     }
   }
 
@@ -129,12 +197,39 @@ export default function ChatBot() {
     }
   }
 
+  // API 키 설정 토글
+  const [showApiKey, setShowApiKey] = useState(false)
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.header}>
-        <h1>LG Inter</h1>
-        <p>음성 인식과 텍스트 입력을 지원합니다</p>
+        <h1>{FURON_PERSONALITY.name}</h1>
+        <p>{FURON_PERSONALITY.description}</p>
+        <button 
+          className={styles.apiKeyButton}
+          onClick={() => setShowApiKey(!showApiKey)}
+        >
+          API 설정
+        </button>
       </div>
+
+      {showApiKey && (
+        <div className={styles.apiKeySection}>
+          <input
+            type="password"
+            placeholder="Google Studio API 키를 입력하세요"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className={styles.apiKeyInput}
+          />
+          <button 
+            onClick={() => setShowApiKey(false)}
+            className={styles.closeButton}
+          >
+            닫기
+          </button>
+        </div>
+      )}
 
       <div className={styles.messagesContainer}>
         {messages.map((message) => (
@@ -175,7 +270,7 @@ export default function ChatBot() {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="메시지를 입력하세요..."
+            placeholder={FURON_PERSONALITY.placeholder}
             className={styles.textInput}
             rows={1}
           />

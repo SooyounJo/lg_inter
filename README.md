@@ -1,24 +1,32 @@
-# LG Inter Project
+# 퓨론 (Furon) - LG 공감형 지능
 
-Next.js와 React를 사용한 프로젝트입니다.
+한국예술종합학교와 LG가 협력하여 개발한 공감형 지능 스마트홈 가이드입니다.
 
 ## 시작하기
 
-먼저 개발 서버를 실행하세요:
+### 1. 환경변수 설정
+프로젝트 루트에 `.env.local` 파일을 생성하고 Google Studio AI API 키를 설정하세요:
 
 ```bash
-yarn dev
-# 또는
-npm run dev
+# .env.local
+NEXT_PUBLIC_GOOGLE_AI_API_KEY=your_google_ai_api_key_here
 ```
 
-브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 결과를 확인하세요.
+### 2. 개발 서버 실행
+```bash
+yarn dev
+```
 
-페이지를 수정하면 자동으로 업데이트됩니다.
+브라우저에서 [http://localhost:3000](http://localhost:3000)에 접속하세요.
 
-## 프로젝트 구조
+### 3. API 키 설정
+- 웹 인터페이스에서 "API 설정" 버튼 클릭
+- Google Studio AI API 키 입력
+- 또는 환경변수에 설정된 키가 자동으로 로드됩니다
 
-- `/pages` - 페이지 파일들
-- `/components` - 재사용 가능한 컴포넌트들
-- `/public` - 정적 파일들
-- `/styles` - CSS 파일들
+## 기능
+
+- 음성 인식 및 텍스트 입력
+- Google Studio Gemini API 연동
+- 스마트홈 제어 제안 (에어컨, 공기청정기, 조명, 냉장고, 스피커)
+- 모바일 최적화된 인터페이스

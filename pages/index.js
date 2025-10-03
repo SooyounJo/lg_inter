@@ -1,17 +1,17 @@
 import Head from 'next/head'
-import ChatBot from '../components/ChatBot'
+import FuronAI from '../components/FuronAI'
 import styles from '../styles/Chat.module.css'
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>LG Inter 챗봇</title>
-        <meta name="description" content="LG Inter 프로젝트 챗봇" />
+        <title>퓨론 (Furon) - LG 공감형 지능</title>
+        <meta name="description" content="LG와 한국예술종합학교가 협력하여 개발한 공감형 지능 스마트홈 가이드" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
 
-      <ChatBot />
+      <FuronAI />
     </div>
   )
 }
