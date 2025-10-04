@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import styles from '../styles/chat.module.css'
-import { FURON_PERSONALITY } from './prompt'
-import { useVoiceRecognition } from './api/voice'
+import { FURON_PERSONALITY } from '../utils/constant/prompt'
+import { useVoiceRecognition } from '../utils/hooks/useVoice'
 
 export default function UI() {
   const [messages, setMessages] = useState([
