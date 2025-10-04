@@ -1,64 +1,35 @@
 import { useState, useRef, useEffect } from 'react'
-import styles from '../styles/Chat.module.css'
-import { FURON_PERSONALITY } from './AIPersonality'
+import styles from '../styles/chat.module.css'
+import { FURON_PERSONALITY } from './prompt'
+import { useVoiceRecognition } from './api/voice'
 
-export default function FuronAI() {
+export default function UI() {
   const [messages, setMessages] = useState([
     { id: 1, text: FURON_PERSONALITY.greeting, isBot: true, timestamp: new Date() }
   ])
   const [inputText, setInputText] = useState('')
-  const [isListening, setIsListening] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [apiStatus, setApiStatus] = useState('🤖 Gemini API 연결 중...')
   const [isClient, setIsClient] = useState(false)
   const messagesEndRef = useRef(null)
-  const recognitionRef = useRef(null)
-
-  // 음성 인식 초기화
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
-      recognitionRef.current = new SpeechRecognition()
-      recognitionRef.current.continuous = false
-      recognitionRef.current.interimResults = true  // 중간 결과 허용
-      recognitionRef.current.lang = 'ko-KR'
-
-      recognitionRef.current.onresult = (event) => {
-        let finalTranscript = ''
-        let interimTranscript = ''
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript
-          } else {
-            interimTranscript += transcript
-          }
+  
+  // 음성 인식 훅 사용
+  const { toggleListening, isListening } = useVoiceRecognition(
+    (transcript) => {
+      setInputText(transcript)
+      // 1초 후 자동으로 메시지 전송
+      setTimeout(() => {
+        if (transcript.trim()) {
+          sendMessage()
         }
-
-        if (finalTranscript) {
-          setInputText(finalTranscript)
-          setIsListening(false)
-        } else if (interimTranscript) {
-          setInputText(interimTranscript)
-        }
-      }
-
-      recognitionRef.current.onerror = () => {
-        setIsListening(false)
-      }
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false)
-        // 1초 후 자동으로 메시지 전송
-        setTimeout(() => {
-          if (inputText.trim()) {
-            sendMessage()
-          }
-        }, 1000)
-      }
+      }, 1000)
+    },
+    (error) => {
+      console.error('음성 인식 오류:', error)
+      alert(error.message)
     }
-  }, [inputText])
+  )
+
 
   // 클라이언트 사이드 확인
   useEffect(() => {
@@ -70,21 +41,6 @@ export default function FuronAI() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // 음성 인식 시작/중지
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
-      alert('이 브라우저는 음성 인식을 지원하지 않습니다.')
-      return
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop()
-      setIsListening(false)
-    } else {
-      recognitionRef.current.start()
-      setIsListening(true)
-    }
-  }
 
   // 메시지 전송
   const sendMessage = async () => {
@@ -98,12 +54,49 @@ export default function FuronAI() {
     }
 
     setMessages(prev => [...prev, userMessage])
+    const currentInput = inputText.trim().toLowerCase()
     setInputText('')
     setIsProcessing(true)
 
+    // 첫 질문에 대한 알고리즘 응답
+    const firstQuestionResponses = {
+      '안녕': '안녕하세요! 저는 퓨론이에요. 오늘 기분은 어떠신가요?',
+      '안녕하세요': '안녕하세요! 저는 퓨론이에요. 오늘 기분은 어떠신가요?',
+      '하이': '안녕하세요! 저는 퓨론이에요. 오늘 기분은 어떠신가요?',
+      'hello': '안녕하세요! 저는 퓨론이에요. 오늘 기분은 어떠신가요?',
+      '누구': '저는 퓨론이에요! LG와 한국예술종합학교가 함께 만든 공감형 지능이에요.',
+      '누구세요': '저는 퓨론이에요! LG와 한국예술종합학교가 함께 만든 공감형 지능이에요.',
+      '소개': '안녕하세요! 저는 퓨론이에요. 스마트홈을 도와드리는 공감형 AI예요.',
+      '소개해': '안녕하세요! 저는 퓨론이에요. 스마트홈을 도와드리는 공감형 AI예요.',
+      '기능': '저는 에어컨, 공기청정기, 조명, 냉장고, 스피커를 조절할 수 있어요!',
+      '뭐할수있어': '저는 에어컨, 공기청정기, 조명, 냉장고, 스피커를 조절할 수 있어요!',
+      '도움': '어떤 기분이신지 말씀해주시면 맞춤 도움을 드릴게요!',
+      '도와줘': '어떤 기분이신지 말씀해주시면 맞춤 도움을 드릴게요!'
+    }
+
+    // 첫 질문 체크 (사용자 메시지가 2개 이하일 때)
+    if (messages.length <= 2) {
+      const response = firstQuestionResponses[currentInput] || 
+                      firstQuestionResponses[Object.keys(firstQuestionResponses).find(key => currentInput.includes(key))]
+      
+      if (response) {
+        setTimeout(() => {
+          const botMessage = {
+            id: Date.now() + 1,
+            text: response,
+            isBot: true,
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, botMessage])
+          setIsProcessing(false)
+        }, 800)
+        return
+      }
+    }
+
     // API 호출 함수
     try {
-      const response = await callFuronAPI(inputText)
+      const response = await callFuronAPI(currentInput)
       const botMessage = {
         id: Date.now() + 1,
         text: response,
@@ -188,7 +181,7 @@ export default function FuronAI() {
   }, [])
 
   return (
-    <div className={styles.chatContainer}>
+    <div className={styles.container}>
       <div className={styles.header}>
         <h1>{FURON_PERSONALITY.name}</h1>
         <p>{FURON_PERSONALITY.description}</p>
@@ -197,7 +190,7 @@ export default function FuronAI() {
         </div>
       </div>
 
-      <div className={styles.messagesContainer}>
+      <div className={styles.messages}>
         {messages.map((message) => (
           <div
             key={message.id}
@@ -230,19 +223,19 @@ export default function FuronAI() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className={styles.inputContainer}>
-        <div className={styles.inputWrapper}>
+      <div className={styles.input}>
+        <div className={styles.wrapper}>
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={FURON_PERSONALITY.placeholder}
-            className={styles.textInput}
+            className={styles.textarea}
             rows={1}
           />
           <button
             onClick={toggleListening}
-            className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
+            className={`${styles.voice} ${isListening ? styles.listening : ''}`}
             title={isListening ? '음성 인식 중지' : '음성 인식 시작'}
           >
             음성
@@ -250,12 +243,12 @@ export default function FuronAI() {
           <button
             onClick={sendMessage}
             disabled={!inputText.trim() || isProcessing}
-            className={styles.sendButton}
+            className={styles.send}
           >
             전송
           </button>
         </div>
-        <div className={styles.inputHint}>
+        <div className={styles.hint}>
           음성 인식을 사용하려면 마이크 권한이 필요합니다
         </div>
       </div>
