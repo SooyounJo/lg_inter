@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import styles from '../styles/chat.module.css'
+import styles from '../styles/1005css.module.css'
 import { FURON_PERSONALITY } from '../utils/constant/prompt'
 import { useVoiceRecognition } from '../utils/hooks/useVoice'
 
@@ -182,15 +182,19 @@ export default function UI() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>{FURON_PERSONALITY.name}</h1>
-        <p>{FURON_PERSONALITY.description}</p>
-        <div className={styles.apiKeyControls}>
-          <span className={styles.apiKeyStatus}>{apiStatus}</span>
+      <div className={styles.chatContainer}>
+        <div className={styles.header}>
+          <h1>{FURON_PERSONALITY.name}</h1>
+          <p>{FURON_PERSONALITY.description}</p>
         </div>
-      </div>
 
-      <div className={styles.messages}>
+        <div className={styles.messages}>
+          {/* Background GIF Animation inside chat */}
+          <img 
+            src="/aichatanimation-unscreen.gif"
+            alt=""
+            className={styles.backgroundVideo}
+          />
         {messages.map((message) => (
           <div
             key={message.id}
@@ -238,19 +242,23 @@ export default function UI() {
             className={`${styles.voice} ${isListening ? styles.listening : ''}`}
             title={isListening ? '음성 인식 중지' : '음성 인식 시작'}
           >
-            음성
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
           </button>
           <button
             onClick={sendMessage}
             disabled={!inputText.trim() || isProcessing}
             className={styles.send}
+            title="전송"
           >
-            전송
+            ➤
           </button>
         </div>
-        <div className={styles.hint}>
-          음성 인식을 사용하려면 마이크 권한이 필요합니다
-        </div>
+      </div>
       </div>
     </div>
   )
