@@ -10,6 +10,7 @@
     "gemini:test": "node scripts/demo-gemini.js"
   },
   "dependencies": {
+    "@google-cloud/speech": "^7.2.0",
     "@google/genai": "^1.22.0",
     "@google/generative-ai": "^0.24.1",
     "dotenv": "^16.4.5",
