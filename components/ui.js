@@ -189,6 +189,12 @@ export default function UI() {
         </div>
 
         <div className={styles.messages}>
+          {/* Background GIF Animation inside chat */}
+          <img 
+            src="/aichatanimation-unscreen.gif"
+            alt=""
+            className={styles.backgroundVideo}
+          />
         {messages.map((message) => (
           <div
             key={message.id}
@@ -251,9 +257,6 @@ export default function UI() {
           >
             ➤
           </button>
-        </div>
-        <div className={styles.hint}>
-          음성 인식을 사용하려면 마이크 권한이 필요합니다
         </div>
       </div>
       </div>

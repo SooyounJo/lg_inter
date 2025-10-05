@@ -7,6 +7,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background GIF Animation */
+.backgroundVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80%;
+  max-height: 80%;
+  width: auto;
+  height: auto;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+  object-fit: contain;
+  object-position: center center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 @keyframes gradientShift {
@@ -34,6 +55,8 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 2;
 }
 
 .header {
@@ -176,11 +199,14 @@
   padding: 12px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(235, 65, 194, 0.05) 100%);
   min-height: 0;
+  position: relative;
 }
 
 .message {
   margin-bottom: 12px;
   display: flex;
+  position: relative;
+  z-index: 10;
 }
 
 .userMessage {
@@ -196,22 +222,24 @@
   padding: 10px 14px;
   border-radius: 16px;
   position: relative;
+  z-index: 10;
 }
 
 .userMessage .messageContent {
-  background: linear-gradient(135deg, rgba(255, 48, 45, 0.15), rgba(235, 65, 194, 0.15));
-  color: #333;
+  background: linear-gradient(135deg, rgba(255, 48, 45, 0.85), rgba(235, 65, 194, 0.85));
+  color: #fff;
   border: 1px solid rgba(255, 48, 45, 0.3);
   border-bottom-right-radius: 4px;
   box-shadow: 0 4px 15px rgba(255, 48, 45, 0.2);
 }
 
 .botMessage .messageContent {
-  background: linear-gradient(135deg, rgba(140, 80, 250, 0.1), rgba(138, 31, 235, 0.1));
+  background: rgba(255, 255, 255, 0.95);
   color: #333;
   border: 1px solid rgba(138, 31, 235, 0.3);
   border-bottom-left-radius: 4px;
   box-shadow: 0 4px 15px rgba(138, 31, 235, 0.15);
+  backdrop-filter: blur(10px);
 }
 
 .messageText {
@@ -418,6 +446,12 @@
   
   .messageContent {
     max-width: 85%;
+  }
+
+  .backgroundVideo {
+    max-width: 85%;
+    max-height: 70%;
+    opacity: 0.35;
   }
 }
 
