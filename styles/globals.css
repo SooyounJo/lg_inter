@@ -95,34 +95,210 @@ body {
   font-family: 'LG Smart', 'LG EI Headline', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   min-height: 100vh;
-  height: 100vh;           /* 뷰포트 고정 */
-  overflow: hidden;        /* 스크롤 비활성화 */
-  /* 제공된 스톱과 동일한 세로 선형 그라디언트 - 화면 전체 적용 */
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.64) 0%, /* 0% #FFFFFF 64% */
-    #F7829E 2%,                  /* 2% */
-    #130745 10%,                 /* 10% */
-    #0D021E 24%,                 /* 24% */
-    #0D051D 54%,                 /* 54% */
-    #710B40 70%,                 /* 70% */
-    #F4A2BE 90%,                 /* 90% */
-    #FFFFFF 98%                  /* 98% */
-  );
-  background-attachment: fixed;
+  height: 100vh;
+  overflow: hidden;
   color: #ffffff;
-  /* 밝은 단계용 오버레이 페이드 레이어 */
 }
 
-/* 기존 단계 그라데이션 오버레이 제거됨 */
+/* 첫 번째 그라데이션 - 원래 상태 유지 */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.64) 0%,
+    #F7829E 2%,
+    #130745 10%,
+    #0D021E 24%,
+    #0D051D 54%,
+    #710B40 70%,
+    #F4A2BE 90%,
+    #FFFFFF 98%,
+    #FFFFFF 100%
+  );
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 첫 번째 그라데이션이 올라가서 연장된 부분까지 보임 */
+.background.chat-enabled {
+  transform: translateY(-50vh);
+  transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 두 번째 그라데이션 - 제자리에서 오퍼시티만 조절 */
+.background-secondary {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  backface-visibility: hidden;
+  will-change: opacity;
+  background: linear-gradient(
+    to bottom,
+    #FFF8E1 0%,
+    #F8F0F5 15%,
+    #E8D5F0 35%,
+    #F4A2BE 65%,
+    #D63384 85%,
+    #6F42C1 100%
+  );
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+
+/* 스와이프 시 두 번째 그라데이션이 제자리에서 페이드 인 */
+.background-secondary.chat-enabled {
+  opacity: 0.1;
+  filter: blur(8px);
+  animation: fadeInAfterDelay 0.5s ease-in-out 0.5s forwards;
+}
+
+/* 완전히 올라간 후 0.2초 뒤에 오퍼시티 100%로 */
+@keyframes fadeInAfterDelay {
+  0% {
+    opacity: 0.1;
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+/* 연한 핑크색 구 - 아래에서 위로 드러나며 블러 효과 */
+.pink-sphere {
+  position: fixed;
+  bottom: -80vh;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  width: 70vh;
+  height: 65vh;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  background: linear-gradient(
+    to top,
+    #0D021E 0%,
+    #270A30 11%,
+    #BB0C66 29%,
+    #F4A2BE 59%,
+    #F688A4 82%,
+    #F7829E 90%,
+    #F7829E 95%,
+    #C5D3D6 100%
+  );
+  animation: gradientShift 8s ease-in-out infinite;
+  opacity: 0;
+  filter: blur(40px);
+  border: 6px solid rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  transition: transform 1s ease-out,
+              opacity 2s ease-out;
+  animation: sphereRise 1s ease-out 1.5s forwards,
+             sphereFadeIn 2s ease-out 1.5s forwards;
+  will-change: transform, opacity;
+}
+
+/* 스와이프 시 구가 아래에서 위로 드러나며 올라옴 - 화면 반절 지점까지 */
+.pink-sphere.chat-enabled {
+  filter: blur(35px);
+  border: 6px solid rgba(255, 255, 255, 0.6);
+}
+
+/* 구가 0.5초 뒤에 스프링으로 올라오는 애니메이션 */
+@keyframes sphereRise {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-70vh) translateZ(0);
+  }
+}
+
+/* 구가 부드럽게 페이드인하는 애니메이션 */
+@keyframes sphereFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 구 그라데이션 천천히 일렁이는 효과 */
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 59%,
+      #F688A4 82%,
+      #F7829E 90%,
+      #F7829E 95%,
+      #C5D3D6 100%
+    );
+  }
+  25% {
+    background: linear-gradient(
+      to top,
+      #270A30 0%,
+      #BB0C66 11%,
+      #F4A2BE 29%,
+      #F688A4 59%,
+      #F7829E 82%,
+      #FFFFFF 90%,
+      #C5D3D6 95%,
+      #FFFFFF 100%
+    );
+  }
+  50% {
+    background: linear-gradient(
+      to top,
+      #BB0C66 0%,
+      #F4A2BE 11%,
+      #F688A4 29%,
+      #F7829E 59%,
+      #FFFFFF 82%,
+      #C5D3D6 90%,
+      #F7829E 95%,
+      #C5D3D6 100%
+    );
+  }
+  75% {
+    background: linear-gradient(
+      to top,
+      #F4A2BE 0%,
+      #F688A4 11%,
+      #F7829E 29%,
+      #FFFFFF 59%,
+      #C5D3D6 82%,
+      #FFFFFF 90%,
+      #C5D3D6 95%,
+      #FFFFFF 100%
+    );
+  }
+}
+
+
+/* 기존 이동 효과는 main에만 적용 */
+.main.chat-enabled {
+  transform: translateY(-50vh);
+  transition: transform 1s ease-out;
+}
+
+/* 깔끔한 하나의 그라데이션만 사용 */
 
 * {
   box-sizing: border-box;
 }
 
-/* 원형 오버레이 스타일 제거됨 */
-
-/* 모바일 래퍼 스타일 제거됨 */
 
 /* Intro overlay & text */
 .intro-overlay {
@@ -147,7 +323,7 @@ body {
 
 .intro-title {
   font-weight: 700;
-  font-size: 48px;
+  font-size: 36px;
   line-height: 1.3;
   margin: 0 0 24px 0;
   font-family: 'LG Smart', 'LG EI Headline', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
@@ -156,7 +332,7 @@ body {
 
 .intro-desc {
   font-weight: 300;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.6;
   margin: 0;
   opacity: 0.8;
@@ -213,7 +389,7 @@ body {
 /* 컴포넌트 기반 애니메이션 클래스들 */
 .fade-out {
   opacity: 0 !important;
-  transition: opacity 2000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  transition: opacity 3s ease-out !important;
 }
 
 .slide-up {
@@ -225,31 +401,13 @@ body {
               filter 2000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
-/* body.chat-enabled 스타일 제거됨 - 컴포넌트 기반 애니메이션으로 대체 */
+/* ❌ 기존 translateY 방식 제거 */
 
-/* 대화 가능 상태일 때: 기본 배경이 하단 방향으로 더 확장되는 느낌의 오버레이 */
-body.chat-enabled::after {
-  content: '';
-  position: fixed;
-  left: 0; right: 0; top: 0; bottom: 0; /* 전체를 덮되 마스크로 하단만 보이게 */
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 240, 245, 0.25) 20%,
-    rgba(255, 220, 235, 0.35) 40%,
-    rgba(255, 200, 225, 0.45) 60%,
-    rgba(255, 180, 215, 0.55) 80%,
-    rgba(255, 160, 205, 0.65) 100%
-  );
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 65%);
-  mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 65%);
-  transition: opacity 2000ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+/* 기존 body transform 제거됨 */
 
-body.chat-enabled::after { opacity: 1; }
+/* 단일 그라데이션만 사용 - 추가 요소 없음 */
+
+/* 디버깅용 표시 제거됨 */
 
 @keyframes introFadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -286,7 +444,7 @@ body.chat-enabled .swipe-hint {
 }
 
 .swipe-hint-text {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 300;
   letter-spacing: 0.2px;
   opacity: 0.85;

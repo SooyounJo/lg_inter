@@ -62,14 +62,21 @@ export default function Home() {
     }
   }, [])
 
-  // body 클래스 토글로 밝기/이동/그라디언트 단계 상태를 전역 적용
+  // body와 html 클래스 토글로 밝기/이동/그라디언트 단계 상태를 전역 적용
   useEffect(() => {
     if (typeof document === 'undefined') return
     const body = document.body
-    if (chatEnabled) body.classList.add('chat-enabled')
-    else body.classList.remove('chat-enabled')
+    const html = document.documentElement
+    if (chatEnabled) {
+      body.classList.add('chat-enabled')
+      html.classList.add('chat-enabled')
+    } else {
+      body.classList.remove('chat-enabled')
+      html.classList.remove('chat-enabled')
+    }
     return () => {
       body.classList.remove('chat-enabled')
+      html.classList.remove('chat-enabled')
     }
   }, [chatEnabled])
 
