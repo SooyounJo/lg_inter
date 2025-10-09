@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
 
-export default function Sphere3D({ chatEnabled, sphereState, isListening, voiceText, isVoiceActive, onGradientUpdate, onMoveComplete, onShowAlgorithm, onHideResponse }) {
+export default function Sphere3d({ chatEnabled, sphereState, isListening, voiceText, isVoiceActive, onGradientUpdate, onMoveComplete, onShowAlgorithm, onHideResponse }) {
   const moveUpTimerRef = useRef(null);
   const material = useMemo(() => new THREE.ShaderMaterial({
     uniforms: {
@@ -279,7 +279,7 @@ export default function Sphere3D({ chatEnabled, sphereState, isListening, voiceT
             const textDelay = 2.0; // 2초 후 응답 표시
             const responseDisplayDuration = 3.0; // 3초 동안 응답 표시
             const algorithmDelay = 0.5; // 응답 사라지고 0.5초 후 알고리즘 표시
-            const gradientDuration = 0.7; // 0.7초 동안 부드럽게 반전
+            const gradientDuration = 2.0; // 2초 동안 자연스럽게 일렁이며 반전
             
             const gradientTime = elapsedTime - waitDuration - blurTransitionDuration - stretchDuration - moveUpDuration;
             
@@ -322,18 +322,19 @@ export default function Sphere3D({ chatEnabled, sphereState, isListening, voiceT
                 : 1 - Math.pow(-2 * gradientProgress + 2, 5) / 2; // quintic ease-out
               
               // 웨이브는 거의 정지된 것처럼
-              const waveSpeed = 0.02; // 거의 멈춘 듯한 웨이브
-              const waveAmplitude = 0.04 * Math.pow(1 - gradientProgress, 4); // 매우 작은 진폭
+              // 자연스러운 웨이브 효과
+              const waveSpeed = 0.3; // 적당한 속도의 웨이브
+              const waveAmplitude = 0.08 * Math.pow(1 - gradientProgress, 2); // 더 큰 진폭으로 시작
               const wavePhase = Math.sin(time * waveSpeed) * waveAmplitude;
               
-              // 극도로 미세한 움직임
-              const microWave = Math.sin(time * 0.008) * 0.005 * (1 - Math.pow(gradientProgress, 5));
+              // 중간 속도의 움직임
+              const microWave = Math.sin(time * 0.15) * 0.05 * (1 - Math.pow(gradientProgress, 3));
               
-              // 거의 보이지 않는 흔들림
-              const nanoWave = Math.sin(time * 0.003) * 0.002 * (1 - Math.pow(gradientProgress, 6));
+              // 느린 움직임
+              const nanoWave = Math.sin(time * 0.08) * 0.03 * (1 - Math.pow(gradientProgress, 4));
               
-              // 추가 미세 움직임
-              const picoWave = Math.sin(time * 0.001) * 0.001 * (1 - Math.pow(gradientProgress, 7));
+              // 매우 느린 움직임
+              const picoWave = Math.sin(time * 0.04) * 0.02 * (1 - Math.pow(gradientProgress, 5));
               
               const baseState = t + (wavePhase + microWave + nanoWave + picoWave);
               

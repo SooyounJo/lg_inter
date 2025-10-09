@@ -6,13 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "gemini:test": "node scripts/demo-gemini.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@google-cloud/speech": "^7.2.0",
     "@google/genai": "^1.22.0",
-    "@google/generative-ai": "^0.24.1",
+    "@google/generative-ai": "^0.2.0",
     "@react-three/drei": "9.99.0",
     "@react-three/fiber": "8.13.7",
     "dotenv": "^17.2.3",

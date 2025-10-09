@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react'
-import Test from '../components/test'
+import Test from '../components/test/index'
 
 export default function Home() {
   const [chatEnabled, setChatEnabled] = useState(false)

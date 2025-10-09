@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function TypewriterText({ text, onComplete }) {
+export default function Typewriter({ text, onComplete }) {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showHighlight, setShowHighlight] = useState(false);
@@ -97,7 +97,8 @@ export default function TypewriterText({ text, onComplete }) {
           padding-left: 1em;
         }
         .device-box {
-          display: block;
+          display: inline-block;
+          position: relative;
           color: #ffffff;
           padding: 0.6em 1.2em;
           opacity: 0;
@@ -111,9 +112,22 @@ export default function TypewriterText({ text, onComplete }) {
           background: #FF00FF;
           box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
           border-radius: 4px;
-          backdrop-filter: blur(5px);
-          width: auto;
+          width: fit-content;
           text-align: center;
+          z-index: 1;
+        }
+        .device-box::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: #FF00FF;
+          border-radius: 4px;
+          opacity: 0.8;
+          z-index: -1;
+          box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
         }
         @keyframes boxFadeIn {
           0% { 

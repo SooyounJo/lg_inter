@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
-import TypewriterText from './TypewriterText'
-import { useVoiceRecognition } from '../utils/hooks/useVoice'
+import Typewriter from './visual/typewriter'
+import { useVoiceRecognition } from '../../utils/hooks/useVoice'
 import dynamic from 'next/dynamic'
 
 const Canvas = dynamic(() => import('@react-three/fiber').then(mod => mod.Canvas), {
   ssr: false
 })
-const Sphere3D = dynamic(() => import('./Sphere3D'), {
+const Sphere3d = dynamic(() => import('./visual/sphere3d'), {
   ssr: false
 })
 
@@ -75,10 +75,16 @@ REFRESH MODE`);
       setSphereState('move-up');
       // UI 숨기기 시작
       setHideUI(true);
-      // 스피어가 올라가고(1.5초) + 그라데이션 반전(0.7초) + 4초 대기 후 응답 표시
+      
+      // 스피어가 완전히 올라가고(1.5초) + 그라데이션이 자연스럽게 일렁이며 반전(2초) + 1초 대기 후 응답 표시
+      const sphereMoveUpTime = 1500;  // 스피어 상승 시간
+      const gradientTransitionTime = 2000;  // 그라데이션 반전 시간
+      const waitBeforeResponseTime = 1000;  // 대기 시간
+      
       setTimeout(() => {
+        // 스피어가 완전히 올라가고 그라데이션 반전이 완료된 후에만 응답 표시
         setShowGeminiResponse(true);
-      }, 1500 + 700 + 4000);
+      }, sphereMoveUpTime + gradientTransitionTime + waitBeforeResponseTime);
     }, 3000)
   }
 
@@ -196,7 +202,7 @@ REFRESH MODE`);
             }}
             dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
             style={{ background: 'transparent' }}>
-          <Sphere3D 
+          <Sphere3d 
             chatEnabled={chatEnabled} 
             sphereState={sphereState}
             isListening={isListening}
@@ -242,7 +248,7 @@ REFRESH MODE`);
       {/* 제미나이 응답 표시 */}
       {showGeminiResponse && (
         <div className="gemini-response">
-          <TypewriterText 
+          <Typewriter 
             text={geminiResponse}
             onComplete={() => {
               // 타이핑이 완료된 후 필요한 작업
@@ -254,7 +260,7 @@ REFRESH MODE`);
       {/* 알고리즘 설명 표시 */}
       {showAlgorithm && (
         <div className="algorithm-display">
-          <TypewriterText 
+          <Typewriter 
             text={algorithmText}
             onComplete={() => {
               // 타이핑이 완료된 후 필요한 작업
