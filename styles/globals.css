@@ -449,6 +449,18 @@ body {
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
 }
 
+/* 구 상태별 스타일 */
+.pink-sphere.clear {
+  filter: blur(5px) !important;
+  transition: filter 0.5s ease-out;
+}
+
+.pink-sphere.blurry-up {
+  filter: blur(40px) !important;
+  transform: translateX(-50%) translateY(-90vh) !important;
+  transition: filter 1s ease-out, transform 1.5s ease-out;
+}
+
 /* 깔끔한 하나의 그라데이션만 사용 */
 
 * {

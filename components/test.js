@@ -1,13 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useVoiceRecognition } from '../utils/hooks/useVoice'
 
 export default function Test({ chatEnabled }) {
   const [voiceText, setVoiceText] = useState('')
   const [isVoiceActive, setIsVoiceActive] = useState(false)
+  const [sphereState, setSphereState] = useState('normal') // 'normal', 'clear', 'blurry-up'
 
   const handleVoiceResult = (transcript) => {
     setVoiceText(transcript)
     setIsVoiceActive(false)
+    
+    // 구 애니메이션 시퀀스 시작
+    setSphereState('clear')
+    
+    // 1초 후 다시 블러 처리하며 상단으로 이동
+    setTimeout(() => {
+      setSphereState('blurry-up')
+    }, 1000)
   }
 
   const handleVoiceError = (error) => {
@@ -33,6 +42,14 @@ export default function Test({ chatEnabled }) {
     }
   }
 
+  // 화면 전환이 완료된 후 버튼 애니메이션 지연 계산
+  const getButtonAnimationDelay = () => {
+    if (!chatEnabled) return '3s'
+    
+    // 백그라운드 전환(1s) + 구 등장(1.5s) = 2.5s 후에 버튼 나타남
+    return '2.5s'
+  }
+
   return (
     <>
       {/* 첫 번째 그라데이션 - 연장된 부분까지 포함 */}
@@ -42,7 +59,7 @@ export default function Test({ chatEnabled }) {
       <div className={`background-secondary ${chatEnabled ? 'chat-enabled' : ''}`}></div>
       
       {/* 연한 핑크색 구 - 하단 기준 화면 6분의 1 지점까지 올라옴 */}
-      <div className={`pink-sphere ${chatEnabled ? 'chat-enabled' : ''}`}></div>
+      <div className={`pink-sphere ${chatEnabled ? 'chat-enabled' : ''} ${sphereState}`}></div>
       
       {/* 메인 컨텐츠 */}
       <div className={`main ${chatEnabled ? 'chat-enabled' : ''}`}>
@@ -78,7 +95,7 @@ export default function Test({ chatEnabled }) {
       {/* 대화 버튼 - 2번째 화면 완료 후 나타남 */}
       <button 
         className={`conversation-button ${chatEnabled ? 'chat-enabled' : ''} ${isListening ? 'listening' : ''}`}
-        style={{ animationDelay: '3s' }}
+        style={{ animationDelay: getButtonAnimationDelay() }}
         onClick={handleButtonClick}
       >
         <div className="conversation-icon">
