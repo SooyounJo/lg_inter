@@ -1,8 +1,14 @@
 export default function Test({ chatEnabled }) {
   return (
     <>
-      {/* 배경은 고정된 뷰포트 전체 기준으로 유지 */}
+      {/* 첫 번째 그라데이션 - 연장된 부분까지 포함 */}
       <div className={`background ${chatEnabled ? 'chat-enabled' : ''}`}></div>
+      
+      {/* 두 번째 그라데이션 - 제자리에서 오퍼시티만 조절 */}
+      <div className={`background-secondary ${chatEnabled ? 'chat-enabled' : ''}`}></div>
+      
+      {/* 연한 핑크색 구 - 하단 기준 화면 6분의 1 지점까지 올라옴 */}
+      <div className={`pink-sphere ${chatEnabled ? 'chat-enabled' : ''}`}></div>
       
       {/* 메인 컨텐츠 */}
       <div className={`main ${chatEnabled ? 'chat-enabled' : ''}`}>
