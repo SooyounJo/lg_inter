@@ -42,13 +42,8 @@ export default function Test({ chatEnabled }) {
     }
   }
 
-  // 화면 전환이 완료된 후 버튼 애니메이션 지연 계산
-  const getButtonAnimationDelay = () => {
-    if (!chatEnabled) return '3s'
-    
-    // 백그라운드 전환(1s) + 구 등장(1.5s) = 2.5s 후에 버튼 나타남
-    return '2.5s'
-  }
+  // 버튼 애니메이션 지연을 고정값으로 설정
+  const buttonAnimationDelay = chatEnabled ? '2.5s' : '3s'
 
   return (
     <>
@@ -95,7 +90,7 @@ export default function Test({ chatEnabled }) {
       {/* 대화 버튼 - 2번째 화면 완료 후 나타남 */}
       <button 
         className={`conversation-button ${chatEnabled ? 'chat-enabled' : ''} ${isListening ? 'listening' : ''}`}
-        style={{ animationDelay: getButtonAnimationDelay() }}
+        style={{ animationDelay: buttonAnimationDelay }}
         onClick={handleButtonClick}
       >
         <div className="conversation-icon">
