@@ -125,7 +125,7 @@ body {
 /* 첫 번째 그라데이션이 올라가서 연장된 부분까지 보임 */
 .background.chat-enabled {
   transform: translateY(-50vh);
-  transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* 두 번째 그라데이션 - 제자리에서 오퍼시티만 조절 */
@@ -137,25 +137,25 @@ body {
   height: 100vh;
   z-index: -1;
   backface-visibility: hidden;
-  will-change: opacity;
+  will-change: opacity, background;
   background: linear-gradient(
     to bottom,
     #FFF8E1 0%,
     #F8F0F5 15%,
     #E8D5F0 35%,
     #F4A2BE 65%,
-    #D63384 85%,
-    #6F42C1 100%
+    #BB0C66 85%,
+    #270A30 100%
   );
   opacity: 0;
-  transition: opacity 1s ease-out;
+  transition: opacity 1s ease-out, background 1.5s ease-in-out;
 }
 
 /* 스와이프 시 두 번째 그라데이션이 제자리에서 페이드 인 */
 .background-secondary.chat-enabled {
   opacity: 0.1;
   filter: blur(8px);
-  animation: fadeInAfterDelay 0.5s ease-in-out 0.5s forwards;
+  animation: fadeInAfterDelay 0.4s ease-in-out 0.3s forwards;
 }
 
 /* 완전히 올라간 후 0.2초 뒤에 오퍼시티 100%로 */
@@ -189,8 +189,8 @@ body {
     #F4A2BE 59%,
     #F688A4 82%,
     #F7829E 90%,
-    #F7829E 95%,
-    #C5D3D6 100%
+    #FFFFFF 95%,
+    #FFFFFF 100%
   );
   animation: gradientShift 8s ease-in-out infinite;
   opacity: 0;
@@ -204,8 +204,8 @@ body {
 .pink-sphere.chat-enabled {
   filter: blur(35px);
   border: 6px solid rgba(255, 255, 255, 0.6);
-  animation: sphereRise 1s ease-out 4s forwards,
-             sphereFadeIn 2s ease-out 4s forwards;
+  animation: sphereRise 0.8s ease-out 1.2s forwards,
+             sphereFadeIn 1s ease-out 1.2s forwards;
 }
 
 /* 구가 0.5초 뒤에 스프링으로 올라오는 애니메이션 */
@@ -239,8 +239,8 @@ body {
       #F4A2BE 59%,
       #F688A4 82%,
       #F7829E 90%,
-      #F7829E 95%,
-      #C5D3D6 100%
+      #FFFFFF 95%,
+      #FFFFFF 100%
     );
   }
   25% {
@@ -252,7 +252,7 @@ body {
       #F688A4 59%,
       #F7829E 82%,
       #FFFFFF 90%,
-      #C5D3D6 95%,
+      #FFFFFF 95%,
       #FFFFFF 100%
     );
   }
@@ -264,9 +264,9 @@ body {
       #F688A4 29%,
       #F7829E 59%,
       #FFFFFF 82%,
-      #C5D3D6 90%,
-      #F7829E 95%,
-      #C5D3D6 100%
+      #FFFFFF 90%,
+      #FFFFFF 95%,
+      #FFFFFF 100%
     );
   }
   75% {
@@ -276,9 +276,9 @@ body {
       #F688A4 11%,
       #F7829E 29%,
       #FFFFFF 59%,
-      #C5D3D6 82%,
+      #FFFFFF 82%,
       #FFFFFF 90%,
-      #C5D3D6 95%,
+      #FFFFFF 95%,
       #FFFFFF 100%
     );
   }
@@ -288,7 +288,7 @@ body {
 /* 기존 이동 효과는 main에만 적용 */
 .main.chat-enabled {
   transform: translateY(-50vh);
-  transition: transform 1s ease-out;
+  transition: transform 0.8s ease-out;
 }
 
 /* 대화 버튼 - 2번째 화면 완료 후 나타남 */
@@ -315,7 +315,7 @@ body {
 }
 
 .conversation-button.chat-enabled {
-  animation: buttonAppear 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 4s forwards;
+  animation: buttonAppear 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.5s forwards;
 }
 
 @keyframes buttonAppear {
@@ -357,6 +357,7 @@ body {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
   filter: blur(0px);
   transform: translateZ(0);
+  transform-origin: bottom center;
 }
 
 .conversation-line.center {
@@ -383,23 +384,132 @@ body {
 /* 음성 인식 텍스트 표시 */
 .voice-text-display {
   position: fixed;
-  bottom: 25vh;
+  bottom: calc(15vh + 80px);
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-  padding: 15px 25px;
-  border-radius: 25px;
-  font-size: 18px;
+  background: none;
+  color: #ffffff;
+  padding: 0;
+  border-radius: 0;
+  font-family: 'LG Smart', 'LG EI Headline', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  max-width: 80vw;
+  word-wrap: break-word;
+  letter-spacing: -0.5px;
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 200, 230, 0.6),
+    0 0 60px rgba(255, 180, 210, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 25;
+  animation: fadeInUp 0.4s ease-out, textGlow 2s ease-in-out infinite;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.voice-text-display.fade-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.conversation-button.fade-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+}
+
+.gemini-response {
+  position: fixed;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-family: 'LG Smart', 'LG EI Headline', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 24px;
   font-weight: 500;
   text-align: center;
   max-width: 80vw;
   word-wrap: break-word;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1.6;
+  text-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.7),
+    0 0 30px rgba(255, 200, 230, 0.5);
   z-index: 25;
-  animation: fadeInUp 0.5s ease-out;
+  opacity: 0;
+  animation: fadeInDown 0.6s ease-out forwards;
+}
+
+.algorithm-display {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 60px;
+  color: #ffffff;
+  font-family: 'LG Smart', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 30;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out forwards;
+  display: block;
+}
+
+.algorithm-display pre {
+  white-space: pre-wrap;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUpFade 1s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 20px rgba(255, 255, 255, 0.8),
+      0 0 40px rgba(255, 200, 230, 0.6),
+      0 0 60px rgba(255, 180, 210, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 30px rgba(255, 255, 255, 1),
+      0 0 60px rgba(255, 200, 230, 0.8),
+      0 0 90px rgba(255, 180, 210, 0.6),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+  }
 }
 
 @keyframes fadeInUp {
@@ -414,47 +524,287 @@ body {
 }
 
 /* 버튼 리스닝 상태 */
-.conversation-button.listening {
+.conversation-button.listening,
+.conversation-button.chat-enabled.listening {
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 200, 230, 0.9) 0%,
-    rgba(255, 180, 210, 0.8) 30%,
-    rgba(255, 160, 190, 0.7) 60%,
-    rgba(255, 140, 170, 0.6) 100%
-  );
-  box-shadow: 0 0 40px rgba(255, 180, 210, 0.8);
-  animation: pulse 1.5s ease-in-out infinite;
+    rgba(255, 230, 240, 1) 0%,
+    rgba(255, 200, 230, 0.95) 20%,
+    rgba(255, 180, 210, 0.9) 50%,
+    rgba(255, 140, 170, 0.8) 100%
+  ) !important;
+  box-shadow: 
+    0 0 50px rgba(255, 180, 210, 1),
+    0 0 80px rgba(255, 140, 170, 0.8),
+    0 0 120px rgba(255, 100, 150, 0.6) !important;
+  animation: pulseGlow 1.2s ease-in-out infinite !important;
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
 }
 
-@keyframes pulse {
+@keyframes pulseGlow {
   0%, 100% {
     transform: translateX(-50%) translateY(0) scale(1);
+    box-shadow: 
+      0 0 50px rgba(255, 180, 210, 1),
+      0 0 80px rgba(255, 140, 170, 0.8),
+      0 0 120px rgba(255, 100, 150, 0.6);
   }
   50% {
     transform: translateX(-50%) translateY(0) scale(1.05);
+    box-shadow: 
+      0 0 60px rgba(255, 180, 210, 1),
+      0 0 100px rgba(255, 140, 170, 0.9),
+      0 0 140px rgba(255, 100, 150, 0.7);
   }
 }
 
 .conversation-button.listening .conversation-line {
   background: linear-gradient(
     to top,
-    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.95) 0%,
     rgba(255, 255, 255, 1) 50%,
     rgba(255, 255, 255, 1) 100%
   );
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 1),
+    0 0 30px rgba(255, 200, 230, 0.8);
+}
+
+/* 리스닝 중 막대 애니메이션 */
+.conversation-button.listening .conversation-line {
+  animation: barWave 0.6s ease-in-out infinite;
+}
+
+.conversation-button.listening .conversation-icon .side:first-of-type {
+  animation: barWave 0.5s ease-in-out 0.1s infinite;
+}
+
+.conversation-button.listening .conversation-icon .center {
+  animation: barWave 0.5s ease-in-out infinite;
+}
+
+.conversation-button.listening .conversation-icon .side:last-of-type {
+  animation: barWave 0.5s ease-in-out 0.2s infinite;
+}
+
+@keyframes barWave {
+  0%, 100% {
+    transform: scaleY(1) translateZ(0);
+  }
+  25% {
+    transform: scaleY(1.3) translateZ(0);
+  }
+  50% {
+    transform: scaleY(0.8) translateZ(0);
+  }
+  75% {
+    transform: scaleY(1.2) translateZ(0);
+  }
 }
 
 /* 구 상태별 스타일 */
 .pink-sphere.clear {
-  filter: blur(5px) !important;
-  transition: filter 0.5s ease-out;
+  filter: blur(5px) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) !important;
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(-70vh) translateZ(0) !important;
+  transition: filter 0.5s ease-out, transform 0.3s ease-out;
+  animation: sphereClearBloom 3s ease-in-out infinite, sphereShake 3s ease-in-out;
 }
 
-.pink-sphere.blurry-up {
+@keyframes sphereClearBloom {
+  0%, 100% {
+    filter: blur(5px) drop-shadow(0 0 40px rgba(255, 255, 255, 0.6));
+  }
+  50% {
+    filter: blur(5px) drop-shadow(0 0 70px rgba(255, 255, 255, 1));
+  }
+}
+
+@keyframes sphereShake {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0vh) translateZ(0);
+  }
+  10% {
+    transform: translateX(-50%) translateY(2vh) translateZ(0);
+  }
+  20% {
+    transform: translateX(-50%) translateY(-2vh) translateZ(0);
+  }
+  30% {
+    transform: translateX(-50%) translateY(1vh) translateZ(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-1vh) translateZ(0);
+  }
+  50%, 100% {
+    transform: translateX(-50%) translateY(0vh) translateZ(0);
+  }
+}
+
+.pink-sphere.move-up {
   filter: blur(40px) !important;
-  transform: translateX(-50%) translateY(-90vh) !important;
-  transition: filter 1s ease-out, transform 1.5s ease-out;
+  transform: translateX(-50%) translateY(-120vh) !important;
+  opacity: 0 !important;
+  transition: filter 1.5s ease-out, transform 2s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 1.5s ease-out;
+  background: linear-gradient(
+    to bottom,
+    #0D021E 0%,
+    #270A30 11%,
+    #BB0C66 29%,
+    #F4A2BE 59%,
+    #F688A4 82%,
+    #F7829E 90%,
+    #FFFFFF 95%,
+    #FFFFFF 100%
+  ) !important;
+}
+
+/* 리스닝 중 스피어 블룸 효과 - 제거 */
+.pink-sphere.chat-enabled.listening {
+  /* 애니메이션 없음 */
+}
+
+@keyframes sphereBloom {
+  0% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 59%,
+      #F688A4 82%,
+      #F7829E 90%,
+      #F7829E 95%,
+      #C5D3D6 100%
+    );
+    filter: blur(35px) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+    border: 6px solid rgba(255, 255, 255, 0.7);
+  }
+  25% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 59%,
+      #F688A4 75%,
+      #F7829E 84%,
+      #FFFFFF 91%,
+      #FFFFFF 100%
+    );
+    filter: blur(33px) drop-shadow(0 0 50px rgba(255, 255, 255, 0.9));
+    border: 6.5px solid rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 55%,
+      #F688A4 70%,
+      #F7829E 80%,
+      #FFFFFF 88%,
+      #FFFFFF 100%
+    );
+    filter: blur(30px) drop-shadow(0 0 60px rgba(255, 255, 255, 1));
+    border: 7px solid rgba(255, 255, 255, 0.9);
+  }
+  75% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 59%,
+      #F688A4 75%,
+      #F7829E 84%,
+      #FFFFFF 91%,
+      #FFFFFF 100%
+    );
+    filter: blur(33px) drop-shadow(0 0 50px rgba(255, 255, 255, 0.9));
+    border: 6.5px solid rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    background: linear-gradient(
+      to top,
+      #0D021E 0%,
+      #270A30 11%,
+      #BB0C66 29%,
+      #F4A2BE 59%,
+      #F688A4 82%,
+      #F7829E 90%,
+      #F7829E 95%,
+      #C5D3D6 100%
+    );
+    filter: blur(35px) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+    border: 6px solid rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* API 상태 노티 */
+.api-status-notification {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.api-status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-out;
+}
+
+.api-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.3s ease-out;
+}
+
+.api-status-item.checking .api-status-dot {
+  background: #FFA500;
+  animation: statusPulse 1.5s ease-in-out infinite;
+}
+
+.api-status-item.ok .api-status-dot {
+  background: #00FF88;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+
+.api-status-item.error .api-status-dot {
+  background: #FF4444;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+}
+
+.api-status-text {
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 4px rgba(255, 165, 0, 0.4);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.8);
+  }
 }
 
 /* 깔끔한 하나의 그라데이션만 사용 */

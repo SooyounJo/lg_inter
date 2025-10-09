@@ -15,12 +15,12 @@ export default async function handler(req, res) {
 
   try {
     // Get API key from environment or request
-    const apiKey = process.env.GOOGLE_CLOUD_API_KEY || req.body.apiKey
+    const apiKey = process.env.GOOGLE_SPEECH_API_KEY || process.env.GOOGLE_CLOUD_API_KEY || req.body.apiKey
 
     if (!apiKey) {
       return res.status(400).json({ 
-        error: 'Google Cloud API key is required',
-        message: 'Please set GOOGLE_CLOUD_API_KEY in .env.local'
+        error: 'Google Speech API key is required',
+        message: 'Please set GOOGLE_SPEECH_API_KEY in .env.local'
       })
     }
 

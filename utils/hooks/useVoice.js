@@ -103,6 +103,8 @@ export const useVoiceRecognition = (onResult, onError) => {
           const base64Audio = reader.result
 
           try {
+            console.log('🎤 Speech API 호출 시작')
+            
             // API로 전송
             const response = await fetch('/api/speech-to-text', {
               method: 'POST',
@@ -112,15 +114,20 @@ export const useVoiceRecognition = (onResult, onError) => {
               body: JSON.stringify({ audio: base64Audio })
             })
 
+            console.log('🎤 Speech API 응답:', response.status)
+            
             const data = await response.json()
+            console.log('🎤 Speech API 데이터:', data)
 
             if (response.ok && data.transcript) {
+              console.log('✅ 음성 인식 성공:', data.transcript)
               onResult(data.transcript)
             } else {
-              onError && onError(new Error(data.error || '음성 인식 실패'))
+              console.error('❌ 음성 인식 실패:', data.error || data.message)
+              onError && onError(new Error(data.error || data.message || '음성 인식 실패'))
             }
           } catch (error) {
-            console.error('Speech-to-Text API 오류:', error)
+            console.error('❌ Speech-to-Text API 오류:', error)
             onError && onError(error)
           }
         }
@@ -145,20 +152,60 @@ export const useVoiceRecognition = (onResult, onError) => {
     }
   }
 
-  // 음성 인식 시작
+  // 음성 인식 시작 - Web Speech API 우선 사용
   const startListening = () => {
-    if (isMobile) {
-      return startListeningMobile()
+    // 브라우저가 Web Speech API를 지원하면 사용
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      if (!recognitionRef.current) {
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
+        recognitionRef.current = new SpeechRecognition()
+        recognitionRef.current.continuous = false
+        recognitionRef.current.interimResults = false
+        recognitionRef.current.lang = 'ko-KR'
+
+        recognitionRef.current.onresult = (event) => {
+          const transcript = event.results[0][0].transcript
+          if (transcript) {
+            onResult(transcript)
+          }
+          setIsListening(false)
+        }
+
+        recognitionRef.current.onerror = (error) => {
+          console.error('음성 인식 오류:', error)
+          setIsListening(false)
+          onError && onError(error)
+        }
+
+        recognitionRef.current.onend = () => {
+          setIsListening(false)
+        }
+      }
+      
+      try {
+        recognitionRef.current.start()
+        setIsListening(true)
+        return true
+      } catch (error) {
+        console.error('음성 인식 시작 오류:', error)
+        onError && onError(error)
+        return false
+      }
     } else {
+      // Web Speech API 미지원 시 Google Cloud 사용
       return startListeningDesktop()
     }
   }
 
   // 음성 인식 중지
   const stopListening = () => {
-    if (isMobile && recognitionRef.current) {
-      recognitionRef.current.stop()
-      setIsListening(false)
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop()
+        setIsListening(false)
+      } catch (error) {
+        console.error('음성 인식 중지 오류:', error)
+      }
     } else if (mediaRecorderRef.current && isListening) {
       mediaRecorderRef.current.stop()
       setIsListening(false)
