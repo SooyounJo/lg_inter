@@ -49,8 +49,14 @@ export default function TypewriterText({ text, onComplete }) {
       return displayText;
     }
 
-    const parts = displayText.split('DEVICE SETTINGS\n');
-    const settings = parts[1] ? parts[1].split('\n').filter(Boolean) : [];
+    const parts = displayText.split('DEVICE SETTINGS');
+    const settings = [
+      'AIR COMFORT',
+      'AIR PURIFY',
+      'WARM LIGHT',
+      'HEALING BGM',
+      'REFRESH MODE'
+    ];
 
     return (
       <>
@@ -58,9 +64,9 @@ export default function TypewriterText({ text, onComplete }) {
         DEVICE SETTINGS
         <div className={`device-settings ${showHighlight ? 'highlight' : ''}`}>
           {settings.map((setting, index) => (
-            <span key={index} className="device-box" style={{ '--index': index }}>
+            <div key={index} className="device-box" style={{ '--index': index }}>
               {setting}
-            </span>
+            </div>
           ))}
         </div>
       </>
@@ -86,26 +92,28 @@ export default function TypewriterText({ text, onComplete }) {
           margin-top: 2em;
           display: flex;
           flex-direction: column;
-          gap: 0.8em;
+          gap: 1em;
           align-items: flex-start;
           padding-left: 1em;
         }
         .device-box {
-          display: inline-block;
+          display: block;
           color: #ffffff;
-          padding: 0.5em 1em;
+          padding: 0.6em 1.2em;
           opacity: 0;
           transform: translateY(20px);
           animation: boxFadeIn 0.4s ease-out forwards;
           animation-delay: calc(var(--index) * 0.15s);
           white-space: nowrap;
-          font-size: 0.9em;
+          font-size: 1em;
           font-weight: 500;
           letter-spacing: 0.05em;
           background: #FF00FF;
-          box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+          box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
           border-radius: 4px;
           backdrop-filter: blur(5px);
+          width: auto;
+          text-align: center;
         }
         @keyframes boxFadeIn {
           0% { 
