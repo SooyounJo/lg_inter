@@ -293,6 +293,162 @@ body {
   transition: transform 1s ease-out;
 }
 
+/* 대화 버튼 - 2번째 화면 완료 후 나타남 */
+.conversation-button {
+  position: fixed;
+  bottom: 15vh;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  width: 120px;
+  height: 60px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 200, 230, 0.8) 30%,
+    rgba(255, 180, 210, 0.6) 60%,
+    rgba(255, 160, 190, 0.4) 100%
+  );
+  border-radius: 60px;
+  border: none;
+  opacity: 0;
+  z-index: 20;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255, 200, 230, 0.5);
+}
+
+.conversation-button.chat-enabled {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  animation: buttonAppear 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 4s forwards;
+}
+
+@keyframes buttonAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 대화 버튼 내부 아이콘 - 별도 레이어로 분리 */
+.conversation-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding-bottom: 8px;
+  filter: blur(0px);
+  z-index: 21;
+  pointer-events: none;
+}
+
+.conversation-line {
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  filter: blur(0px);
+  transform: translateZ(0);
+}
+
+.conversation-line.center {
+  width: 3px;
+  height: 35px;
+}
+
+.conversation-line.side {
+  width: 3px;
+  height: 25px;
+}
+
+/* 대화 버튼 호버 효과 */
+.conversation-button:hover {
+  transform: translateX(-50%) translateY(-5px);
+  box-shadow: 0 5px 40px rgba(255, 200, 230, 0.7);
+}
+
+.conversation-button:hover .conversation-line {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+/* 음성 인식 텍스트 표시 */
+.voice-text-display {
+  position: fixed;
+  bottom: 25vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 15px 25px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 80vw;
+  word-wrap: break-word;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 25;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 버튼 리스닝 상태 */
+.conversation-button.listening {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 200, 230, 0.9) 0%,
+    rgba(255, 180, 210, 0.8) 30%,
+    rgba(255, 160, 190, 0.7) 60%,
+    rgba(255, 140, 170, 0.6) 100%
+  );
+  box-shadow: 0 0 40px rgba(255, 180, 210, 0.8);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(0) scale(1.05);
+  }
+}
+
+.conversation-button.listening .conversation-line {
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+}
+
 /* 깔끔한 하나의 그라데이션만 사용 */
 
 * {

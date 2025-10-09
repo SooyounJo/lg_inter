@@ -1,4 +1,38 @@
+import { useState } from 'react'
+import { useVoiceRecognition } from '../utils/hooks/useVoice'
+
 export default function Test({ chatEnabled }) {
+  const [voiceText, setVoiceText] = useState('')
+  const [isVoiceActive, setIsVoiceActive] = useState(false)
+
+  const handleVoiceResult = (transcript) => {
+    setVoiceText(transcript)
+    setIsVoiceActive(false)
+  }
+
+  const handleVoiceError = (error) => {
+    console.error('음성 인식 오류:', error)
+    setIsVoiceActive(false)
+  }
+
+  const { toggleListening, isListening } = useVoiceRecognition(
+    handleVoiceResult,
+    handleVoiceError
+  )
+
+  const handleButtonClick = () => {
+    if (!isListening) {
+      setIsVoiceActive(true)
+      const success = toggleListening()
+      if (!success) {
+        setIsVoiceActive(false)
+      }
+    } else {
+      toggleListening()
+      setIsVoiceActive(false)
+    }
+  }
+
   return (
     <>
       {/* 첫 번째 그라데이션 - 연장된 부분까지 포함 */}
@@ -33,6 +67,26 @@ export default function Test({ chatEnabled }) {
 
       {/* 스와이프 후 핑크 블롭 제거 */}
       </div>
+      
+      {/* 음성 인식된 텍스트 표시 */}
+      {chatEnabled && voiceText && (
+        <div className="voice-text-display">
+          {voiceText}
+        </div>
+      )}
+      
+      {/* 대화 버튼 - 2번째 화면 완료 후 나타남 */}
+      <button 
+        className={`conversation-button ${chatEnabled ? 'chat-enabled' : ''} ${isListening ? 'listening' : ''}`}
+        style={{ animationDelay: '3s' }}
+        onClick={handleButtonClick}
+      >
+        <div className="conversation-icon">
+          <div className="conversation-line side"></div>
+          <div className="conversation-line center"></div>
+          <div className="conversation-line side"></div>
+        </div>
+      </button>
     </>
   )
 }
