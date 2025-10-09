@@ -42,9 +42,6 @@ export default function Test({ chatEnabled }) {
     }
   }
 
-  // 버튼 애니메이션 지연을 고정값으로 설정
-  const buttonAnimationDelay = chatEnabled ? '2.5s' : '3s'
-
   return (
     <>
       {/* 첫 번째 그라데이션 - 연장된 부분까지 포함 */}
@@ -90,7 +87,6 @@ export default function Test({ chatEnabled }) {
       {/* 대화 버튼 - 2번째 화면 완료 후 나타남 */}
       <button 
         className={`conversation-button ${chatEnabled ? 'chat-enabled' : ''} ${isListening ? 'listening' : ''}`}
-        style={{ animationDelay: buttonAnimationDelay }}
         onClick={handleButtonClick}
       >
         <div className="conversation-icon">
